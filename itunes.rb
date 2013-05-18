@@ -1,16 +1,20 @@
 require 'nokogiri-plist'
 require 'uri'
 
-library_xml = Nokogiri::PList(open('/Users/dchopson/Music/iTunes/iTunes Music Library.xml'))
+xml_library_location = Dir.glob(Dir.home + '/**/iTunes/iTunes Music Library.xml')
+xml_library = Nokogiri::PList(open(xml_library_location.first))
 
 xml_locations = []
-library_xml["Tracks"].values.map do |t|
-  xml_locations << URI.decode(t["Location"].gsub('file://localhost',''))
+xml_library["Tracks"].values.map do |t|
+  location = t["Location"][/\/USB_Storage(.*)/]
+  if location
+    xml_locations << URI.decode(location)
+  end
 end
 
 server_locations = []
 Dir.glob('/Volumes/USB_Storage/Server/Music/**/*.{mp3,aiff,wav,mp4,aac,m4a}') do |f|
-  server_locations << f
+  server_locations << f[/\/USB_Storage(.*)/]
 end
 
 not_in_itunes = server_locations - xml_locations
