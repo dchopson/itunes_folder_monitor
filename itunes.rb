@@ -13,7 +13,8 @@ xml_library["Tracks"].values.map do |t|
 end
 
 server_locations = []
-Dir.glob('/Volumes/USB_Storage/Server/Music/**/*.{mp3,aiff,wav,mp4,aac,m4a}') do |f|
+# Dir.glob('/Volumes/USB_Storage/Server/Music/**/*.{mp3,aiff,wav,mp4,aac,m4a}') do |f|
+Dir.glob('//READYSHARE/USB_Storage/Server/Music/**/*.{mp3,aiff,wav,mp4,aac,m4a}') do |f|
   server_locations << f[/\/USB_Storage(.*)/]
 end
 
