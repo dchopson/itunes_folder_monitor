@@ -5,18 +5,18 @@ xml_library_location = Dir.glob(Dir.home + '/**/iTunes/iTunes Music Library.xml'
 xml_library = Nokogiri::PList(open(xml_library_location.first))
 
 xml_locations = []
-xml_library["Tracks"].values.map do |t|
-  location = t["Location"][/\/USB_Storage(.*)/]
+xml_library['Tracks'].values.map do |t|
+  location = t['Location'].sub('file://localhost','')
   if location
     xml_locations << URI.decode(location)
   end
 end
 
-server_locations = []
-# Dir.glob('/Volumes/USB_Storage/Server/Music/**/*.{mp3,aiff,wav,mp4,aac,m4a}') do |f|
-Dir.glob('//READYSHARE/USB_Storage/Server/Music/**/*.{mp3,aiff,wav,mp4,aac,m4a}') do |f|
-  server_locations << f[/\/USB_Storage(.*)/]
+first = xml_locations.first
+music_directory = first.sub(first.split('/').last,'')
+if Dir.exists?(music_directory)
+  music_directory_locations = Dir.glob(music_directory + '**/*.{mp3,aiff,wav,mp4,aac,m4a}')
+  puts music_directory_locations - xml_locations
+else
+  puts 'Cannot find the music directory specified by your iTunes library'
 end
-
-not_in_itunes = server_locations - xml_locations
-puts not_in_itunes
